@@ -1,6 +1,21 @@
 import passport from 'passport';
 import { Strategy as GithubStrategy } from 'passport-github';
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { User } from '../../models';
+import { UserData } from '../../pages';
+import { createJwtToken } from '../../utils/createJwtToken';
+
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET_KEY,
+};
+
+passport.use(
+  'jwt',
+  new JwtStrategy(opts, (jwt_payload, done) => {
+    done(null, jwt_payload.data);
+  }),
+);
 
 passport.use(
   'github',
@@ -12,7 +27,9 @@ passport.use(
     },
     async (_: unknown, __: unknown, profile, done) => {
       try {
-        const obj = {
+        let userData: UserData;
+
+        const obj: Omit<UserData, 'id'> = {
           fullname: profile.displayName,
           avatarUrl: profile.photos?.[0].value,
           isActive: 0,
@@ -28,10 +45,15 @@ passport.use(
 
         if (!findUser) {
           const user = await User.create(obj);
-          return done(null, user.toJSON());
+          userData = user.toJSON();
+        } else {
+          userData = await findUser.toJSON();
         }
 
-        done(null, findUser);
+        done(null, {
+          ...userData,
+          token: createJwtToken(userData),
+        });
       } catch (error) {
         done(error);
       }
