@@ -17,6 +17,7 @@
     "@types/passport": "^1.0.6",
     "@types/passport-github": "^1.1.5",
     "@types/sharp": "^0.28.0",
+    "@types/simple-peer": "^9.6.3",
     "@types/socket.io": "^2.1.13",
     "axios": "^0.21.1",
     "clsx": "^1.1.1",
@@ -42,6 +43,7 @@
     "react-redux": "^7.2.4",
     "sequelize": "^6.6.2",
     "sharp": "^0.28.1",
+    "simple-peer": "^9.11.0",
     "socket.io": "^4.0.1",
     "socket.io-client": "^4.0.1",
     "ts-node-dev": "^1.1.6"
